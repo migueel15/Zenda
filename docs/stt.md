@@ -83,3 +83,17 @@ Al ejecutar `zenda uninstall`, Zenda intenta cancelar el dictado y retira el mó
 - **El atajo no hace nada:** comprueba que `zenda stt shortcut show` indique el módulo cargado y añade el `require` a `hyprland.lua` si falta.
 - **El atajo ya está asignado:** consulta los conflictos y elige otra combinación.
 - **El texto no se pega:** comprueba que `wl-copy` esté instalado y que `hyprctl` responda en la sesión. En terminal, confirma que su clase esté incluida en `ZENDA_STT_TERMINALS`.
+
+## Microphone priority
+
+`ZENDA_MIC_PRIORITY_APPS` (Settings → Dictation → Prioridad de micrófono) takes
+a comma-separated list of app names, such as `Claude, Codex, T3 Code`. Each name
+is matched, case-insensitively, as a substring of a PipeWire recording stream's
+`application.name`, `application.process.binary`, `application.id`, `node.name`
+or `media.name`. While any matching app records from any microphone, the shell
+mutes every other recording stream, and unmutes them when it stops. The row
+"Grabando ahora" lists the apps recording right now, to find the right name.
+
+WirePlumber remembers the mute of each app, so the apps muted by Zenda are kept
+in `mic-priority-muted.json` in the Quickshell state folder and unmuted the next
+time they record, even after a restart of the shell.

@@ -28,6 +28,7 @@ ShellRoot {
 
 	// IPC endpoints must exist even before their first view is constructed.
 	readonly property var launcherService: LauncherService
+	readonly property var micPriority: MicPriority
 	Component.onCompleted: ZendaTheme.start()
 
 	Material.theme: Material.Dark

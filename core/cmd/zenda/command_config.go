@@ -31,6 +31,7 @@ const (
 	keyScreenshotDir      = "ZENDA_SCREENSHOT_DIR"
 	keyWidgetDiscord      = "ZENDA_WIDGET_DISCORD"
 	keyBatteryWarning     = "ZENDA_BATTERY_WARNING"
+	keyMicPriorityApps    = "ZENDA_MIC_PRIORITY_APPS"
 )
 
 // Bounds of the interface font scale, in percent. 100 is the default size.
@@ -61,6 +62,7 @@ var editableSettings = map[string]bool{
 	keyWidgetSpotify:      true,
 	keyWidgetDiscord:      true,
 	keyBatteryWarning:     true,
+	keyMicPriorityApps:    true,
 	stt.KeyLanguage:       true,
 	stt.KeyPreload:        true,
 	stt.KeyLiveText:       true,
@@ -109,6 +111,7 @@ func configGetCmd() *cobra.Command {
 					keyWidgetSpotify:     values[keyWidgetSpotify],
 					keyWidgetDiscord:     values[keyWidgetDiscord],
 					keyBatteryWarning:    values[keyBatteryWarning],
+					keyMicPriorityApps:   values[keyMicPriorityApps],
 					clipboard.KeyEnabled: values[clipboard.KeyEnabled],
 					clipboard.KeyMax:     values[clipboard.KeyMax],
 					stt.KeyPreload:       strconv.FormatBool(sttSettings.Preload),

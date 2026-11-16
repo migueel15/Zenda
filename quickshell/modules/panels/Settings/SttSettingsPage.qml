@@ -163,6 +163,31 @@ Flickable {
                 }
             }
         }
+        ZendaGroup {
+            ZendaRow {
+                separator: false
+                label: "Prioridad de micrófono"
+                modified: (ZendaSettings.values.ZENDA_MIC_PRIORITY_APPS || "") !== ""
+                onResetRequested: { micPriorityField.text = ""; ZendaSettings.save({ ZENDA_MIC_PRIORITY_APPS: "" }, "Prioridad de micrófono restablecida"); }
+                description: MicPriority.active
+                    ? "Activa: el resto de aplicaciones tiene el micrófono silenciado."
+                    : "Apps separadas por comas. Si alguna graba, se silencia el micrófono del resto."
+                ZendaField {
+                    id: micPriorityField
+                    Layout.preferredWidth: 220
+                    Layout.fillWidth: true
+                    placeholder: "Claude, Codex, T3 Code"
+                    text: ZendaSettings.values.ZENDA_MIC_PRIORITY_APPS || ""
+                    enabled: ZendaSettings.configLoaded
+                    onCommitted: ZendaSettings.save({ ZENDA_MIC_PRIORITY_APPS: text.trim() }, "Prioridad de micrófono guardada")
+                }
+            }
+            ZendaRow {
+                label: "Grabando ahora"
+                description: MicPriority.inputStreams.length === 0 ? "Ninguna aplicación"
+                    : MicPriority.inputStreams.map(node => MicPriority.appKey(node)).join(", ")
+            }
+        }
         RowLayout {
             Layout.fillWidth: true
             Layout.topMargin: Theme.spacing.sm
