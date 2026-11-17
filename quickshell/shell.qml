@@ -21,6 +21,7 @@ import qs.services
 import qs.modules.stt
 import qs.modules.screenshot
 import qs.modules.lock
+import qs.modules.pinstack
 import qs.common
 
 ShellRoot {
@@ -29,6 +30,7 @@ ShellRoot {
 	// IPC endpoints must exist even before their first view is constructed.
 	readonly property var launcherService: LauncherService
 	readonly property var micPriority: MicPriority
+	readonly property var pinStack: PinStack
 	Component.onCompleted: ZendaTheme.start()
 
 	Material.theme: Material.Dark
@@ -47,6 +49,7 @@ ShellRoot {
 	MediaKeys {}
 
 	SttDock {}
+	PinStackPanel {}
 	LockScreen {}
 	ScreenshotLayer {}
 	DisplayConfirmDialog {}

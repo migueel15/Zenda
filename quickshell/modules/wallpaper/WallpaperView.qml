@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import QtQuick.Window
 import QtQuick.Shapes
 import Qt5Compat.GraphicalEffects
 
@@ -175,7 +176,9 @@ Rectangle {
             anchors.fill: parent
             asynchronous: true
             cache: false
-            sourceSize: Qt.size(Math.round(root.width), Math.round(root.height))
+            // Decoded at screen size, not at the free area's: a free area that
+            // changes (pinstack resize) would reload the image and flash black.
+            sourceSize: Qt.size(Screen.width, Screen.height)
             onStatusChanged: root.imageStatusChanged(frame)
         }
     }

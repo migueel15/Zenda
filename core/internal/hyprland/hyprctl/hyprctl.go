@@ -239,3 +239,10 @@ func (c Client) Option(ctx context.Context, name string) (string, error) {
 
 // Exit ends the Hyprland session.
 func (c Client) Exit(ctx context.Context) error { return c.Dispatch(ctx, DspExit()) }
+
+// SetPinstackWidth moves the pinned column to a new width. Live skips the window
+// animations while the user is still dragging its edge.
+// Offset is the space other exclusive zones take before the column.
+func (c Client) SetPinstackWidth(ctx context.Context, width, offset int, live bool) error {
+	return c.Eval(ctx, fmt.Sprintf("zenda_pinstack.set_width(%d, %t, %d)", width, live, offset))
+}

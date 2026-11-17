@@ -27,6 +27,7 @@ func main() {
 	rootCmd.AddCommand(weatherCmd())
 	rootCmd.AddCommand(settingsCmd())
 	rootCmd.AddCommand(windowCmd())
+	rootCmd.AddCommand(pinstackCmd())
 	rootCmd.AddCommand(notificationsCmd)
 	rootCmd.AddCommand(newLauncherCmd())
 	rootCmd.AddCommand(keyboardCmd())

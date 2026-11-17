@@ -44,6 +44,7 @@ var generatedModules = []generatedModule{
 	{"input", renderInputModule},
 	{"startup", renderStartupModule},
 	{"idle", renderIdleModule},
+	{"pinstack", renderPinstackModule},
 }
 
 func renderLockModule(in moduleInput) (string, error) {
