@@ -157,6 +157,9 @@ Item {
                         interactive: !Bluetooth.pairing
                         selected: Bluetooth.activeDevice?.address === modelData.address
                         leadingIcon: modelData.icon?.includes("headset") || modelData.icon?.includes("audio") ? "󰋋" : "󰂯"
+                        leadingActionIcon: modelData.paired && !modelData.trusted && !modelData.blocked ? "󰒘" : ""
+                        leadingActionLabel: "Marcar como fiable"
+                        onLeadingActionClicked: modelData.trusted = true;
                         text: Bluetooth.getDisplayName(modelData)
                         trailingIcon: ""
                         trailingText: modelData.pairing || Bluetooth.pairing && Bluetooth.pairingDevice === modelData ? "Emparejando…" : modelData.connected ? (Bluetooth.getBatteryLabel(modelData) || "Conectado") : (modelData.paired ? "Desconectado" : "Sin emparejar")

@@ -9,7 +9,7 @@ Quickshell expone conexión, emparejamiento y estado de los dispositivos, pero s
 
 ## Decisión
 
-Cada intento iniciado desde Zenda usa un proceso `zenda bluetooth pair`, que registra un agente con capacidad `KeyboardDisplay` y llama a `Pair` desde la misma conexión al bus de sistema. El agente solo admite llamadas del propietario de `org.bluez` y para el dispositivo solicitado. Las preguntas y respuestas se intercambian con QML por JSON en entrada y salida estándar; ninguna confirmación se acepta automáticamente.
+Cada intento iniciado desde Zenda usa un proceso `zenda bluetooth pair`, que registra un agente con capacidad `KeyboardDisplay` y llama a `Pair` desde la misma conexión al bus de sistema. El agente solo admite llamadas del propietario de `org.bluez` y para el dispositivo solicitado. Las preguntas y respuestas se intercambian con QML por JSON en entrada y salida estándar; ninguna confirmación se acepta automáticamente. Después de un emparejamiento correcto iniciado desde Zenda, se guarda `Trusted=true` para ese dispositivo antes de solicitar la conexión. Para dispositivos ya emparejados, el usuario decide individualmente si quiere marcarlos como fiables.
 
 ## Consecuencias
 

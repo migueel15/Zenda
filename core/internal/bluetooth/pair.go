@@ -198,6 +198,10 @@ func Pair(parent context.Context, path string, input io.Reader, output io.Writer
 		device.CallWithContext(cleanup, "org.bluez.Device1.CancelPairing", 0)
 		return fmt.Errorf("no se pudo emparejar: %w", err)
 	}
+	if err := device.CallWithContext(ctx, "org.freedesktop.DBus.Properties.Set", 0,
+		"org.bluez.Device1", "Trusted", dbus.MakeVariant(true)).Err; err != nil {
+		return fmt.Errorf("dispositivo emparejado, pero no se pudo marcar como fiable: %w", err)
+	}
 	if err := a.emit(prompt{Kind: "paired"}); err != nil {
 		return err
 	}

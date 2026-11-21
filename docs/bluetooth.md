@@ -13,13 +13,13 @@ Al pulsar un dispositivo sin emparejar, el backend inicia el emparejamiento y co
 - Código para un teclado: se muestra para introducirlo y confirmarlo en el dispositivo.
 - Autorización de emparejamiento o de un servicio: requiere confirmación explícita.
 
-**Cancelar**, el cierre del proceso o dos minutos sin terminar abortan el intento. Los fallos aparecen en el desplegable. Tras emparejar, Zenda solicita la conexión; los dispositivos ya vinculados siguen usando la conexión directa de Quickshell.
+**Cancelar**, el cierre del proceso o dos minutos sin terminar abortan el intento. Los fallos aparecen en el desplegable. Tras emparejar, Zenda marca ese dispositivo como fiable en BlueZ y solicita la conexión. Para un dispositivo ya emparejado, pasa el puntero sobre su fila y pulsa el botón **Marcar como fiable** que aparece en el lugar del icono izquierdo si quieres permitir que vuelva a conectarse por sí solo.
 
 BlueZ sigue siendo necesario como servicio del sistema. Zenda registra un agente únicamente para los emparejamientos que inicia, sin sustituir al agente predeterminado de Blueman ni gestionar solicitudes entrantes ajenas. No guarda los PIN.
 
 ## Contrato interno
 
-`zenda bluetooth pair /org/bluez/hciN/dev_XX_XX_XX_XX_XX_XX` registra el agente y ejecuta `Pair` en la misma conexión D-Bus. La salida contiene eventos JSON por línea con `kind`, `id` y, si procede, `code`; la entrada recibe `{ "id": 1, "accept": true, "value": "123456" }` o `{ "cancel": true }`. `paired` cierra el diálogo antes de conectar. Véase el [ADR 009](adr/adr-009-bluetooth-pairing-agent.md).
+`zenda bluetooth pair /org/bluez/hciN/dev_XX_XX_XX_XX_XX_XX` registra el agente y ejecuta `Pair` en la misma conexión D-Bus. La salida contiene eventos JSON por línea con `kind`, `id` y, si procede, `code`; la entrada recibe `{ "id": 1, "accept": true, "value": "123456" }` o `{ "cancel": true }`. Tras `Pair`, el proceso establece `Trusted=true` en BlueZ. El evento `paired` cierra el diálogo antes de conectar. Véase el [ADR 009](adr/adr-009-bluetooth-pairing-agent.md).
 
 ## Validación en sesión
 
