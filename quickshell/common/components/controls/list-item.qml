@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Controls as Controls
 
 import qs.common
 import qs.common.components.controls
@@ -11,6 +12,9 @@ Rectangle {
     id: root
 
     property string leadingIcon: ""
+    property string leadingActionIcon: ""
+    property string leadingActionLabel: ""
+    readonly property bool showLeadingAction: interactive && hover.hovered && leadingActionIcon !== ""
     property string text: ""
     property string supportingText: ""
     property string trailingText: ""
@@ -21,6 +25,7 @@ Rectangle {
     property bool interactive: true
 
     signal clicked
+    signal leadingActionClicked
 
     width: parent ? parent.width : 0
     implicitHeight: supportingText !== "" ? Theme.scaled(52) : Theme.scaled(40)
@@ -36,17 +41,46 @@ Rectangle {
     ZendaStateLayer { hovered: hover.hovered && root.interactive; pressed: tap.pressed }
 
     RowLayout {
+        id: rowLayout
+
         anchors.fill: parent
         anchors.leftMargin: Theme.spacing.md
         anchors.rightMargin: Theme.spacing.md
         spacing: Theme.spacing.sm
 
-        Text {
-            visible: root.leadingIcon !== ""
-            text: root.leadingIcon
-            color: root.selected ? Theme.colors.primary : Theme.colors.textMuted
-            font.family: Theme.iconFamily
-            font.pixelSize: Theme.scaled(14)
+        Item {
+            id: leadingSlot
+
+            visible: root.leadingIcon !== "" || root.leadingActionIcon !== ""
+            implicitWidth: root.leadingActionIcon !== "" ? Math.max(iconLabel.implicitWidth, actionButton.implicitWidth) : iconLabel.implicitWidth
+            implicitHeight: root.leadingActionIcon !== "" ? Math.max(iconLabel.implicitHeight, actionButton.implicitHeight) : iconLabel.implicitHeight
+
+            Text {
+                id: iconLabel
+
+                anchors.centerIn: parent
+                visible: !root.showLeadingAction
+                text: root.leadingIcon
+                color: root.selected ? Theme.colors.primary : Theme.colors.textMuted
+                font.family: Theme.iconFamily
+                font.pixelSize: Theme.scaled(14)
+            }
+
+            ZendaIconButton {
+                id: actionButton
+
+                anchors.centerIn: parent
+                visible: root.showLeadingAction
+                size: Theme.scaled(28)
+                icon: root.leadingActionIcon
+                accessibleLabel: root.leadingActionLabel
+                onClicked: root.leadingActionClicked()
+
+                HoverHandler { id: actionHover }
+                Controls.ToolTip.visible: visible && actionHover.hovered
+                Controls.ToolTip.delay: 500
+                Controls.ToolTip.text: accessibleLabel
+            }
         }
 
         ColumnLayout {
@@ -88,5 +122,10 @@ Rectangle {
     }
 
     HoverHandler { id: hover; enabled: root.interactive; cursorShape: Qt.PointingHandCursor }
-    TapHandler { id: tap; enabled: root.interactive; onTapped: root.clicked() }
+    Item {
+        anchors.fill: parent
+        anchors.leftMargin: root.showLeadingAction ? rowLayout.x + leadingSlot.x + leadingSlot.width : 0
+
+        TapHandler { id: tap; enabled: root.interactive; onTapped: root.clicked() }
+    }
 }
