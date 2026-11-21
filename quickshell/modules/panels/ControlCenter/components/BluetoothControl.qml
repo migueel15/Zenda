@@ -151,21 +151,34 @@ Item {
                 Repeater {
                     model: Bluetooth.namedDevices
 
-                    delegate: ZendaListItem {
+                    delegate: Column {
+                        id: deviceRows
+
                         required property var modelData
                         width: devicesColumn.width
-                        interactive: !Bluetooth.pairing
-                        selected: Bluetooth.activeDevice?.address === modelData.address
-                        leadingIcon: modelData.icon?.includes("headset") || modelData.icon?.includes("audio") ? "󰋋" : "󰂯"
-                        text: Bluetooth.getDisplayName(modelData)
-                        trailingIcon: ""
-                        trailingText: modelData.pairing || Bluetooth.pairing && Bluetooth.pairingDevice === modelData ? "Emparejando…" : modelData.connected ? (Bluetooth.getBatteryLabel(modelData) || "Conectado") : (modelData.paired ? "Desconectado" : "Sin emparejar")
-                        trailingColor: modelData.connected ? Theme.colors.success : Theme.colors.overlay
-                        onClicked: {
-                            const wasPaired = modelData.paired;
-                            if (modelData.connected) Bluetooth.disconnectDevice(modelData);
-                            else Bluetooth.connectDevice(modelData);
-                            if (wasPaired) root.devicesExpanded = false;
+
+                        ZendaListItem {
+                            readonly property var modelData: deviceRows.modelData
+                            interactive: !Bluetooth.pairing
+                            selected: Bluetooth.activeDevice?.address === modelData.address
+                            leadingIcon: modelData.icon?.includes("headset") || modelData.icon?.includes("audio") ? "󰋋" : "󰂯"
+                            text: Bluetooth.getDisplayName(modelData)
+                            trailingIcon: ""
+                            trailingText: modelData.pairing || Bluetooth.pairing && Bluetooth.pairingDevice === modelData ? "Emparejando…" : modelData.connected ? (Bluetooth.getBatteryLabel(modelData) || "Conectado") : (modelData.paired ? "Desconectado" : "Sin emparejar")
+                            trailingColor: modelData.connected ? Theme.colors.success : Theme.colors.overlay
+                            onClicked: {
+                                const wasPaired = modelData.paired;
+                                if (modelData.connected) Bluetooth.disconnectDevice(modelData);
+                                else Bluetooth.connectDevice(modelData);
+                                if (wasPaired) root.devicesExpanded = false;
+                            }
+                        }
+
+                        ZendaListItem {
+                            visible: deviceRows.modelData.paired && !deviceRows.modelData.trusted && !deviceRows.modelData.blocked
+                            interactive: !Bluetooth.pairing
+                            text: "Marcar como fiable"
+                            onClicked: deviceRows.modelData.trusted = true;
                         }
                     }
                 }
