@@ -2,6 +2,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls as Controls
 import QtQuick.Layouts
+import QtQuick.Window
 import Quickshell
 import qs.common
 import qs.common.components.controls
@@ -61,9 +62,13 @@ FloatingWindow {
                 anchors.fill: parent; anchors.margins: Theme.spacing.md
                 Image {
                     id: image
-                    anchors.fill: parent
+                    readonly property real pixelRatio: Screen.devicePixelRatio || 1
+                    anchors.centerIn: parent
+                    width: Math.min(viewport.width, sourceSize.width / pixelRatio)
+                    height: Math.min(viewport.height, sourceSize.height / pixelRatio)
                     source: ScreenshotService.editorPath ? "file://" + encodeURI(ScreenshotService.editorPath) : ""
                     fillMode: Image.PreserveAspectFit
+                    mipmap: true
                     onStatusChanged: if (status === Image.Ready) selection.reset()
                 }
                 CropSelection {

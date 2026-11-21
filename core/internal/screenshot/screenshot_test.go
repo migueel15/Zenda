@@ -6,6 +6,7 @@ import (
 	"image/color"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 )
@@ -117,5 +118,42 @@ func TestFreezeFailureRemovesSession(t *testing.T) {
 	entries, err := os.ReadDir(filepath.Join(runtime, "zenda", "screenshots"))
 	if err != nil || len(entries) != 0 {
 		t.Fatalf("left private frames: %v %v", entries, err)
+	}
+}
+
+func TestFreezeOnlyOverridesGrimScaleBelowOne(t *testing.T) {
+	runtime := t.TempDir()
+	bin := t.TempDir()
+	t.Setenv("XDG_RUNTIME_DIR", runtime)
+	t.Setenv("HYPRLAND_INSTANCE_SIGNATURE", "test")
+	t.Setenv("PATH", bin)
+	commands := map[string]string{
+		"hyprctl": `#!/bin/sh
+printf '%s\n' '[{"name":"DP-1","scale":0.8},{"name":"DP-2","scale":1.25}]'
+`,
+		"grim": `#!/bin/sh
+for path do :; done
+printf '%s\n' "$@" > "$path"
+`,
+	}
+	for name, script := range commands {
+		if err := os.WriteFile(filepath.Join(bin, name), []byte(script), 0700); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	paths, err := Freeze(context.Background(), []string{"DP-1", "DP-2"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	wantArgs := []string{"-o\nDP-1\n-s\n0.8\n", "-o\nDP-2\n"}
+	for i, path := range paths {
+		argLog, err := os.ReadFile(path)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if got := strings.TrimSuffix(string(argLog), path+"\n"); got != wantArgs[i] {
+			t.Errorf("grim invocation %d: got %q, want %q", i, got, wantArgs[i])
+		}
 	}
 }

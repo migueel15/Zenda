@@ -12,11 +12,17 @@ portapapeles con `wl-copy --type image/png`. Aparece «Captura de pantalla tomad
 con una vista de la imagen. Las coordenadas lógicas se convierten usando la
 proporción entre el PNG y la superficie del monitor, incluidas escalas fraccionarias.
 Las capturas de las salidas se toman consecutivamente antes de abrir los overlays.
+En Hyprland, para salidas con escala inferior a 1, Zenda indica esa escala a
+`grim` para evitar que amplíe el PNG al tamaño lógico del monitor. Si no se
+puede consultar la escala, se usa la detección automática de `grim`.
+El recorte conserva los píxeles de la región seleccionada, tanto al copiar como al guardar.
 
 ## Editor
 
 Pulsa la notificación, en el pop-up o en el panel, para abrir el editor de
 Quickshell. Arrastra para definir otro rectángulo o ajusta sus ocho asas.
+El editor muestra los recortes pequeños a su tamaño original y reduce los
+grandes para encajarlos en la ventana. La vista de la notificación es una miniatura.
 
 - **Guardar:** guarda el recorte actual en PNG y lo copia al portapapeles. El
   editor muestra la ruta del archivo creado.
