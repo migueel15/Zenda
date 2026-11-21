@@ -51,9 +51,9 @@ Rectangle {
         Item {
             id: leadingSlot
 
-            visible: root.leadingIcon !== "" || root.leadingActionIcon !== ""
-            implicitWidth: root.leadingActionIcon !== "" ? Math.max(iconLabel.implicitWidth, actionButton.implicitWidth) : iconLabel.implicitWidth
-            implicitHeight: root.leadingActionIcon !== "" ? Math.max(iconLabel.implicitHeight, actionButton.implicitHeight) : iconLabel.implicitHeight
+            visible: root.leadingIcon !== ""
+            implicitWidth: iconLabel.implicitWidth
+            implicitHeight: iconLabel.implicitHeight
 
             Text {
                 id: iconLabel
@@ -64,22 +64,6 @@ Rectangle {
                 color: root.selected ? Theme.colors.primary : Theme.colors.textMuted
                 font.family: Theme.iconFamily
                 font.pixelSize: Theme.scaled(14)
-            }
-
-            ZendaIconButton {
-                id: actionButton
-
-                anchors.centerIn: parent
-                visible: root.showLeadingAction
-                size: Theme.scaled(28)
-                icon: root.leadingActionIcon
-                accessibleLabel: root.leadingActionLabel
-                onClicked: root.leadingActionClicked()
-
-                HoverHandler { id: actionHover }
-                Controls.ToolTip.visible: visible && actionHover.hovered
-                Controls.ToolTip.delay: 500
-                Controls.ToolTip.text: accessibleLabel
             }
         }
 
@@ -124,8 +108,28 @@ Rectangle {
     HoverHandler { id: hover; enabled: root.interactive; cursorShape: Qt.PointingHandCursor }
     Item {
         anchors.fill: parent
-        anchors.leftMargin: root.showLeadingAction ? rowLayout.x + leadingSlot.x + leadingSlot.width : 0
+        anchors.leftMargin: actionButton.visible ? actionButton.x + actionButton.width : 0
 
         TapHandler { id: tap; enabled: root.interactive; onTapped: root.clicked() }
+    }
+
+    ZendaIconButton {
+        id: actionButton
+
+        // Center the button on the glyph without reserving layout space for it.
+        x: rowLayout.x + leadingSlot.x + (leadingSlot.width - width) / 2
+        y: rowLayout.y + leadingSlot.y + (leadingSlot.height - height) / 2
+        visible: root.showLeadingAction && leadingSlot.visible
+        size: Theme.scaled(24)
+        icon: root.leadingActionIcon
+        accessibleLabel: root.leadingActionLabel
+        border.width: actionHover.hovered ? 1 : 0
+        border.color: Theme.colors.overlay
+        onClicked: root.leadingActionClicked()
+
+        HoverHandler { id: actionHover }
+        Controls.ToolTip.visible: visible && actionHover.hovered
+        Controls.ToolTip.delay: 500
+        Controls.ToolTip.text: accessibleLabel
     }
 }
