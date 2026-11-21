@@ -12,8 +12,11 @@ import (
 	"os/exec"
 	"path/filepath"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
+
+	"github.com/migueel15/Zenda/core/internal/hyprland/hyprctl"
 )
 
 const KeyDirectory = "ZENDA_SCREENSHOT_DIR"
@@ -106,6 +109,18 @@ func Freeze(ctx context.Context, outputs []string) (paths []string, err error) {
 			os.RemoveAll(dir)
 		}
 	}()
+	scales := make(map[string]string)
+	if hyprctl.InSession() {
+		// grim's automatic scale starts at 1, even for outputs scaled below 1.
+		// Above that threshold its Wayland geometry gives a more precise ratio.
+		if monitors, queryErr := hyprctl.New(nil).Monitors(ctx); queryErr == nil {
+			for _, monitor := range monitors {
+				if !monitor.Disabled && monitor.Scale > 0 && monitor.Scale < 1 {
+					scales[monitor.Name] = strconv.FormatFloat(monitor.Scale, 'f', -1, 64)
+				}
+			}
+		}
+	}
 	for i, output := range outputs {
 		path := filepath.Join(dir, fmt.Sprintf("output-%d.png", i))
 		// Pre-create privately: grim truncates the existing file.
@@ -114,7 +129,11 @@ func Freeze(ctx context.Context, outputs []string) (paths []string, err error) {
 			return nil, e
 		}
 		f.Close()
-		if e = exec.CommandContext(ctx, "grim", "-o", output, path).Run(); e != nil {
+		args := []string{"-o", output}
+		if scale := scales[output]; scale != "" {
+			args = append(args, "-s", scale)
+		}
+		if e = exec.CommandContext(ctx, "grim", append(args, path)...).Run(); e != nil {
 			return nil, fmt.Errorf("capturar %s: %w", output, e)
 		}
 		paths = append(paths, path)
