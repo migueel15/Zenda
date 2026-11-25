@@ -38,6 +38,7 @@ func main() {
 	rootCmd.AddCommand(inputCmd())
 	rootCmd.AddCommand(startupCmd())
 	rootCmd.AddCommand(bluetoothCmd())
+	rootCmd.AddCommand(batteryCmd())
 	rootCmd.AddCommand(usbCmd())
 	rootCmd.AddCommand(clipboardCmd())
 	rootCmd.AddCommand(themeCmd())

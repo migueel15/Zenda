@@ -19,6 +19,11 @@ ZendaPanel {
     targetWidth: 500
     targetHeight: container.implicitHeight
 
+    onOpenChanged: {
+        DeviceBattery.fastPolling = open;
+        if (open) DeviceBattery.refresh();
+    }
+
     Rectangle {
         id: container
         anchors.fill: parent
@@ -73,6 +78,16 @@ ZendaPanel {
 
             DndControl {
                 Layout.fillWidth: true
+            }
+
+            Item {
+                width: 1
+                height: batterySection.visible ? 8 : 0
+                visible: batterySection.visible
+            }
+
+            BatterySection {
+                id: batterySection
             }
         }
 
